@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %}Ajout d'une tâche{% endblock %}</h1>
+
+<form method="post">
+
+    <!-- Markup example 1: input is inside label -->
+  <label for="task">
+    Description
+    <input type="text" id="task" name="task" placeholder="Description de ma tache" required>
+  </label>
+
+  <label for="complete">
+    <input type="checkbox" id="complete" name="complete" role="switch">
+    Tâche finie
+  </label>
+
+  <label for="due">Date souhaitée de fin
+    <input type="date" id="due" name="due">
+  </label>
+
+  <!-- Buttons -->
+  <button type="submit">Ajouter</button>
+  <a href="{{ url_for('crud.index') }}" role="button" class="secondary">Annuler</a>
+
+
+</form>
+{% endblock %}
+

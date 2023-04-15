@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %}Mes tâches{% endblock %}</h1>
+
+        <div align="right">
+            <a href="{{ url_for('crud.create') }}" role="button">Ajouter</a>
+            <a href="{{ url_for('crud.import_csv') }}" role="button">Import CSV</a>
+            <a href="{{ url_for('crud.export_csv') }}" role="button" target="_blank">Export CSV</a>
+        </div>
+        <div>
+<table role="grid">
+  <thead>
+    <tr>
+      <th scope="col">Description</th>
+      <th scope="col">Etat</th>
+      <th scope="col">Date de fin souhaitée</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for todo in todos %}
+    <tr>
+      <td>{{ todo.task }}</td>
+      <td>{% if todo.complete %}Finie{% else %}En cours{% endif %}</td>
+      <td>{% if todo.due %}{{ todo.due.strftime('%Y-%m-%d') }}{% endif %}</td>
+      <td>
+          <a href="{{ url_for('crud.edit', id=todo.id) }}" role="button">Modifier</a>
+          <a href="{{ url_for('crud.delete', id=todo.id) }}" role="button">Supprimer</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+            {% if todos|length <= 0 %}<h3>Aucune tâche n'est présente dans votre liste</h3>{% endif %}
+        </div>
+{% endblock %}
+

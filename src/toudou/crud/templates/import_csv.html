@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %}Importer des tâches{% endblock %}</h1>
+
+<form method="post" enctype="multipart/form-data">
+
+<!-- File browser -->
+<label for="file">Sélectionner le fichier CSV à importer
+  <input type="file" id="file" name="file">
+</label>
+
+  <!-- Buttons -->
+  <button type="submit">Importer</button>
+  <a href="{{ url_for('crud.index') }}" role="button" class="secondary">Annuler</a>
+
+
+</form>
+{% endblock %}
+

@@ -1,0 +1,95 @@
+<!doctype html>
+<html data-theme="dark" lang="en" xmlns:width="http://www.w3.org/1999/xhtml">
+
+<head>
+    <link rel="shortcut icon" type="image/jpg" href="/templates/favicon.icos"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('crud.static', filename= 'css/pico.css') }}">
+    <script src="https://cdn.lordicon.com/ritcuqlt.js"></script>
+    <title>{% block title %} {% endblock %}</title>
+    <style>
+        nav{
+            text-shadow: 5px 3px 2px darkred;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <ul>
+
+                <li><strong>
+                        <a href="{{ url_for('.index') }}">
+                            <lord-icon src="https://cdn.lordicon.com/kxoxiwrf.json" trigger="hover" colors="primary:#4be1ec,secondary:#cb5eee" state="hover" style="width:65px;height:65px">
+                            </lord-icon>
+                        </a>
+                    </strong>
+                </li>
+
+                <li><strong>Toudou</strong></li>
+
+            </ul>
+
+            <ul>
+                <li>
+                    <a href="{{ url_for('.signup') }}" class="navbar-item">
+                        <lord-icon src="https://cdn.lordicon.com/ljvjsnvh.json" trigger="hover" colors="primary:#4be1ec,secondary:#cb5eee" state="hover-1" style="width:65px;height:65px">
+                        </lord-icon>
+                    </a>
+                </li>
+
+
+                <li>
+                    <a href="signup.html" class="navbar-item"> <lord-icon src="https://cdn.lordicon.com/vfbsedgx.json" trigger="hover" style="width:65px;height:65px">
+                        </lord-icon>
+                    </a>
+                </li>
+
+                <!--<li>
+                        <article label="Theme-switcher">
+                        <button class="contrast theme-switcher" label="Turn on dark mode">
+                        <i>Turn on dark mode</i>
+                        </button>
+                        </article>
+
+                        <script src="{{ url_for('crud.static', filename= 'js/test.js') }}">
+                        </script>
+                </li>-->
+            </ul>
+        </nav>
+    </div>
+
+
+
+    <div class="flashes">
+    </div>
+
+    <main class="container">
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <dialog open id="modal-info">
+            <article>
+                <a href="#close" aria-label="Close" class="close" data-target="modal-info" onClick="toggleModal(event)">
+                </a>
+                <h3>Information!</h3>
+                <p>
+                    {% for message in messages %}
+                    {{ message }}
+                    {% endfor %}
+                </p>
+            </article>
+        </dialog>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %} {% endblock %}
+    </main>
+    <footer class="container">
+        <small>Built with <a href="https://picocss.com">Pico</a></small>
+    </footer>
+    <script src="{{ url_for('crud.static', filename= 'js/modal.min.js') }}"></script>
+</body>
+
+</html>
