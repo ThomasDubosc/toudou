@@ -1,4 +1,5 @@
 import os
+import logging
 
 from flask import Flask, render_template, redirect, url_for, request, Blueprint, abort, flash
 from datetime import datetime
@@ -9,53 +10,64 @@ import toudou.models as models
 import toudou.services as services
 from toudou import config
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, BooleanField, DateField
+from wtforms.validators import DataRequired, Optional
+from toudou.authy import auth
+
 crud = Blueprint('crud', __name__, template_folder='templates',
     static_folder='static', static_url_path='/', url_prefix = '/')
-
 
 UPLOAD_FOLDER = config['UPLOAD_FOLDER']
 
 @crud.errorhandler(500)
 def handle_internal_error(error):
+    logging.exception(error)
     flash("Erreur interne du serveur", 'error')
     return redirect(url_for('crud.index'))
 
 @crud.errorhandler(404)
 def handle_internal_error(error):
+    logging.exception(error)
     flash("La tache n'a pas été trouvée", 'error')
     return redirect(url_for('crud.index'))
 
+@auth.login_required
 @crud.route('/')
 def index():
+    auth.login_required()
+
     listTodos = models.get_todos()
-    return render_template('index.html', todos=listTodos)
+    return render_template('index.html', todos=listTodos, username=auth.username())
 
 @crud.route('/delete/<int:id>')
 def delete(id):
     models.delete_todo(id)
     return redirect(url_for('crud.index'))
 
+class CreateForm(FlaskForm):
+    task = StringField('task', validators=[DataRequired()])
+    complete = BooleanField('')
+    due = DateField('', format='%Y-%m-%d', validators=[Optional()])
+
 @crud.route('/create', methods=('GET', 'POST'))
 def create():
+    form = CreateForm()
     if request.method == 'POST':
-        task = request.form['task']
+        logging.info(f"-----------------Creation d'une nouvelle tache: {form.task.data}" )
 
-        complete = False
-        if request.form.get('complete'):
-            complete = bool(request.form.get('complete'))
+        if form.validate_on_submit():
+            models.create_todo(form.task.data, complete=form.complete.data, due=form.due.data)
+            return redirect(url_for('crud.index'))
 
-        dueString = request.form['due']
-        due = None
-        if dueString:
-            due = datetime.strptime(dueString, '%Y-%m-%d')
+        return render_template('create.html', form=form)
 
-        models.create_todo(task, complete=complete, due=due)
-        return redirect(url_for('crud.index'))
-    return render_template('create.html')
+    return render_template('create.html', form=form)
 
 @crud.route('/edit/<int:id>', methods=('GET', 'POST'))
 def edit(id):
     if request.method == 'POST':
+        logging.info(f"Mise à jour de la tache {id}")
         task = request.form['task']
 
         complete = False

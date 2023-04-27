@@ -8,13 +8,11 @@ src/Toudou.egg-info/requires.txt
 src/Toudou.egg-info/top_level.txt
 src/toudou/__init__.py
 src/toudou/app.py
+src/toudou/auth.py
 src/toudou/models.py
 src/toudou/services.py
-src/toudou/test.py
 src/toudou/views.py
 src/toudou/api/__init__.py
 src/toudou/api/api_view.py
-src/toudou/auth/__init__.py
-src/toudou/auth/auth_view.py
 src/toudou/crud/__init__.py
 src/toudou/crud/crud_view.py
