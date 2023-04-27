@@ -2,6 +2,7 @@
 
 The best todo application!
 
+Git : https://github.com/ThomasDubosc/toudou
 
 ## Installing
 
