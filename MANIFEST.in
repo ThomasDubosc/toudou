@@ -1,0 +1,3 @@
+
+graft src/toudou/static
+graft src/toudou/templates

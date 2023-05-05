@@ -48,12 +48,13 @@ def create_todo(
     task: str,
     complete: bool = False,
     due: Optional[datetime] = None,
-) -> None:
+) -> int:
     with Session(engine) as session:
         id = random.randint(1, 100000000)
         todo = Todo(id=id, task=task, complete=complete, due=due)
         session.add(todo)
         session.commit()
+        return id
 
 
 def get_todo(id: int) -> Todo:
@@ -61,6 +62,10 @@ def get_todo(id: int) -> Todo:
         return session.query(Todo).get(id)
 
 
+def get_todos_completed(complete: bool) -> list[Todo]:
+    with Session(engine) as session:
+        return session.query(Todo).filter(Todo.complete == complete).all()
+    
 def get_todos() -> list[Todo]:
     with Session(engine) as session:
         return session.query(Todo).all()

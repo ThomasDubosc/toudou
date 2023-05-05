@@ -15,42 +15,43 @@ from wtforms import StringField, BooleanField, DateField
 from wtforms.validators import DataRequired, Optional
 from toudou.authy import auth
 
-crud = Blueprint('crud', __name__, template_folder='templates',
-    static_folder='static', static_url_path='/', url_prefix = '/')
+ihm = Blueprint('ihm', __name__, template_folder='templates',
+    static_folder='static')
 
 UPLOAD_FOLDER = config['UPLOAD_FOLDER']
 
-@crud.errorhandler(500)
+@ihm.errorhandler(500)
 def handle_internal_error(error):
     logging.exception(error)
     flash("Erreur interne du serveur", 'error')
-    return redirect(url_for('crud.index'))
+    return redirect(url_for('ihm.index'))
 
-@crud.errorhandler(404)
+@ihm.errorhandler(404)
 def handle_internal_error(error):
     logging.exception(error)
     flash("La tache n'a pas été trouvée", 'error')
-    return redirect(url_for('crud.index'))
+    return redirect(url_for('ihm.index'))
 
-@auth.login_required
-@crud.route('/')
+
+@ihm.route('/')
+@auth.login_required(role=['admin', 'user'])
 def index():
-    auth.login_required()
-
     listTodos = models.get_todos()
     return render_template('index.html', todos=listTodos, username=auth.username())
 
-@crud.route('/delete/<int:id>')
+@ihm.route('/delete/<int:id>')
+@auth.login_required(role='admin')
 def delete(id):
     models.delete_todo(id)
-    return redirect(url_for('crud.index'))
+    return redirect(url_for('ihm.index'))
 
 class CreateForm(FlaskForm):
     task = StringField('task', validators=[DataRequired()])
     complete = BooleanField('')
     due = DateField('', format='%Y-%m-%d', validators=[Optional()])
 
-@crud.route('/create', methods=('GET', 'POST'))
+@ihm.route('/create', methods=('GET', 'POST'))
+@auth.login_required(role='admin')
 def create():
     form = CreateForm()
     if request.method == 'POST':
@@ -58,13 +59,14 @@ def create():
 
         if form.validate_on_submit():
             models.create_todo(form.task.data, complete=form.complete.data, due=form.due.data)
-            return redirect(url_for('crud.index'))
+            return redirect(url_for('ihm.index'))
 
         return render_template('create.html', form=form)
 
     return render_template('create.html', form=form)
 
-@crud.route('/edit/<int:id>', methods=('GET', 'POST'))
+@ihm.route('/edit/<int:id>', methods=('GET', 'POST'))
+@auth.login_required(role='admin')
 def edit(id):
     if request.method == 'POST':
         logging.info(f"Mise à jour de la tache {id}")
@@ -80,7 +82,7 @@ def edit(id):
             due = datetime.strptime(dueString, '%Y-%m-%d')
 
         models.update_todo(id, task, complete, due)
-        return redirect(url_for('crud.index'))
+        return redirect(url_for('ihm.index'))
 
     else:
         todo = models.get_todo(id)
@@ -89,12 +91,14 @@ def edit(id):
         return render_template('edit.html', todo=todo)
 
 
-@crud.route('/export.csv')
+@ihm.route('/export.csv')
+@auth.login_required
 def export_csv():
     csv = services.export_to_csv()
     return csv, 200, {'Content-Type': 'text/csv; charset=utf-8'}
 
-@crud.route('/import_csv', methods=('GET', 'POST'))
+@ihm.route('/import_csv', methods=('GET', 'POST'))
+@auth.login_required(role='admin')
 def import_csv():
 
     if request.method == 'POST':
@@ -112,11 +116,11 @@ def import_csv():
         csv = fp.read()
         fp.close()
         services.import_from_csv(csv)
-        return redirect(url_for('crud.index'))
+        return redirect(url_for('ihm.index'))
 
     return render_template('import_csv.html')
 
-@crud.route('/signup')
+@ihm.route('/signup')
 def signup():
     print("jhhvfu")
     return render_template('/auth/signup.html')

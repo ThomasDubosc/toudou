@@ -9,10 +9,12 @@ dependencies = [
     "sqlalchemy>=2.0.4",
     "flask-httpauth>=4.8.0",
     "flask-wtf>=1.1.1",
+    "flask-pydantic>=0.11.0",
+    "datetime>=5.1",
+    "gunicorn>=20.1.0",
 ]
 requires-python = ">=3.7"
 license = { text = "MIT" }
-
 
 [project.scripts]
 toudou = "toudou.views:cli"

@@ -4,9 +4,9 @@
     <h1>{% block title %}Mes tâches {{ username }} {% endblock %}</h1>
 
         <div align="right">
-            <a href="{{ url_for('crud.create') }}" role="button">Ajouter</a>
-            <a href="{{ url_for('crud.import_csv') }}" role="button">Import CSV</a>
-            <a href="{{ url_for('crud.export_csv') }}" role="button" target="_blank">Export CSV</a>
+            <a href="{{ url_for('ihm.create') }}" role="button">Ajouter</a>
+            <a href="{{ url_for('ihm.import_csv') }}" role="button">Import CSV</a>
+            <a href="{{ url_for('ihm.export_csv') }}" role="button" target="_blank">Export CSV</a>
         </div>
         <div>
 <table role="grid">
@@ -25,8 +25,8 @@
       <td>{% if todo.complete %}Finie{% else %}En cours{% endif %}</td>
       <td>{% if todo.due %}{{ todo.due.strftime('%Y-%m-%d') }}{% endif %}</td>
       <td>
-          <a href="{{ url_for('crud.edit', id=todo.id) }}" role="button">Modifier</a>
-          <a href="{{ url_for('crud.delete', id=todo.id) }}" role="button">Supprimer</a>
+          <a href="{{ url_for('ihm.edit', id=todo.id) }}" role="button">Modifier</a>
+          <a href="{{ url_for('ihm.delete', id=todo.id) }}" role="button">Supprimer</a>
       </td>
     </tr>
   {% endfor %}
